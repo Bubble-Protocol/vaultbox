@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button } from "../../components/Button/Button";
@@ -15,22 +15,36 @@ export const CreateVault = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal();
+  const appError = stateManager.useStateData('error')();
   const { createVault } = stateManager.useStateData('vault-functions')();
+  const [ creating, setCreating ] = useState(false);
 
-  function create() {
-    
+  async function create() {
+    setCreating(true);
+    await createVault();
+    setCreating(false);
+    navigate('/create-vault');
   }
 
   return (
-    <div className="page">
+    <div className="create">
       <div className="title">Create Your Vault</div>
       <div className="description">
         Your vault is protected by a smart contract controlled only by you and is encrypted using your wallet key. 
         A blockchain transaction is needed to create your vault.
       </div>
-      {isConnected && <Button title="Create" onClick={createVault} />}
-      {!isConnected && <Button title="Connect Wallet" onClick={openConnectModal} />}
+      {!creating && isConnected && <Button title="Create" onClick={create} />}
+      {!creating && !isConnected && <Button title="Connect Wallet" onClick={openConnectModal} />}
+      {creating && <div className="loader" />}
+
+      {/* Error log */}
+      {appError && <span className='error-text'>{formatError(appError)}</span>}
+
     </div>
   );
 };
 
+
+function formatError(error) {
+  return error.details || error.message || error;
+}

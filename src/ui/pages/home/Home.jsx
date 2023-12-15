@@ -15,7 +15,7 @@ export const Home = () => {
   const vaultState = stateManager.useStateData('state')();
 
   return (
-    <div className="page">
+    <div className="home">
       <div className="hero-section">
         <div className="titles">
           <span className="title">Secure your <span className="title-highlight">files</span> in your personal encrypted <span className="title-highlight">vault</span></span>

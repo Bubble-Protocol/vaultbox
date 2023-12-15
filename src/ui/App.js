@@ -12,6 +12,7 @@ import { useAccount } from "wagmi";
 import { MobileMenu } from "./components/MobileMenu/MobileMenu";
 import { CreateVault } from "./pages/create";
 import { stateManager } from "../state-context";
+import { MyVault } from "./pages/vault";
 
 
 /**
@@ -46,8 +47,8 @@ function App() {
       {/* Content */}
       <div className="app-content">
         <Routes>
-          <Route path='/create-vault' element={vaultState === 'initialised' ? <Home/> : <CreateVault/>} />
-          <Route path='/vault' element={isConnected ? <Home/> : <Home/>} />
+          <Route path='/create-vault' element={vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
+          <Route path='/vault' element={isConnected && vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
           <Route path='/prices' element={<Home/>} />
           <Route path='*' element={<Home/>} />
         </Routes>

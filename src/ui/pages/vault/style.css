@@ -1,4 +1,4 @@
-.create {
+.vault {
   display: flex;
   padding: 48px 16px 0;
   flex-direction: column;
@@ -9,7 +9,7 @@
   width: 800px;
 }
 
-.create .title {
+.vault .title {
   color: #000;
   font-family: Poppins;
   font-size: 32px;
@@ -18,7 +18,7 @@
   line-height: 48px; /* 120% */
 }
 
-.create .description {
+.vault .description {
   display: flex;
   align-items: flex-start;
   align-self: stretch;
@@ -29,4 +29,35 @@
   font-weight: 400;
   line-height: 28px; /* 128.571% */
   text-align: center;
+}
+
+.vault .file-list {
+  color: #000;
+  font-family: Arial;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px; /* 100% */
+}
+
+.vault hr {
+  width: 100%;
+}
+
+.vault .info-text {
+  color: #aaa;
+}
+
+.vault .text-button {
+  color: #888;
+  font-family: Poppins;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 128.571% */
+  text-align: center;
+}
+
+.vault .text-button:hover {
+  cursor: pointer;
 }
