@@ -34,18 +34,18 @@ function App() {
 
       {/* Header */}
       <div className="header">
-        <img className="logo clickable" src={logo} onClick={() => window.innerWidth >= 910 ? navigate('/') : setMenuVisible(!menuVisible)} ></img>
-        <div className="menubar">
+        <div className="logo clickable" onClick={() => window.innerWidth >= 910 ? navigate('/') : setMenuVisible(!menuVisible)} ></div>
+        <div className="expander mobile"></div>
+        <div className="menubar no-mobile">
           <span className="header-link" onClick={() => navigate('/vault')}>My Vault</span>
           <span className="header-link" onClick={() => navigate('/prices')}>Prices</span>
         </div>
         <div className="right-menu">
-          <ConnectButton className="test" showBalance={false} />
+          <ConnectButton className="test" showBalance={false} chainStatus={"icon"} />
         </div>
       </div>
 
       {/* Content */}
-      <div className="app-content">
         <Routes>
           <Route path='/create-vault' element={vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
           <Route path='/vault' element={isConnected && vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
@@ -53,7 +53,6 @@ function App() {
           <Route path='*' element={<Home/>} />
         </Routes>
       </div>
-    </div>
 
   );
 

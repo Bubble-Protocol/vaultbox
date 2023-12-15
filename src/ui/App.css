@@ -7,6 +7,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.screen-overlay, .tinted-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+
+.tinted-screen-overlay {
+  background-color: #000;
+  opacity: 20%;
+}
+
 .App {
   width: 100%;
   display: flex;
@@ -14,7 +28,6 @@ body {
   align-items: center;
   background-color: #fff;
 }
-
 
 .header {
   display: flex;
@@ -29,7 +42,14 @@ body {
 }
 
 .logo {
-  width: 200px;
+  width: 222px;
+  height: 40px;
+  background-image: url("./assets/logo.png");
+  background-size: cover;
+}
+
+.expander {
+  flex: 1;
 }
 
 .menubar {
@@ -54,7 +74,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  width: 200px;
+  width: 222px;
 }
 
 .clickable:hover {
@@ -65,6 +85,35 @@ body {
   font-size: 14px;
   color: rgb(172, 24, 24);
   text-align: center;
+}
+
+.mobile {
+  display: none;
+}
+
+.hide {
+  display: none;
+}
+
+@media only screen and (max-width: 910px) {
+
+  .logo {
+    width: 40px;
+    background-image: url("./assets/logo-icon.png");
+  }
+    .App .mobile {
+    display: inherit;
+  }
+  
+  .App .no-mobile {
+    display: none;
+  }
+  
+  .App .header {
+    padding: 4px;
+    gap: 16px;
+  }
+
 }
 
 .loader {
