@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-import { watchAccount, getWalletClient, getPublicClient } from 'wagmi/actions';
+import { watchAccount, getWalletClient, getPublicClient, getNetwork } from 'wagmi/actions';
 import { EventManager } from './utils/EventManager';
 
 const STATES = {
@@ -29,6 +29,12 @@ export class Wallet {
     this.closeWatchers.push(watchAccount(this._handleAccountsChanged)) 
   }
 
+  getChain() {
+    const { chain } = getNetwork();
+    if (chain) return chain.id;
+    else return undefined;
+  }
+
   async deploy(chain, abi, bytecode, args=[], options={}) {
 
     const walletClient = await getWalletClient();
@@ -46,6 +52,29 @@ export class Wallet {
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
     return receipt.contractAddress;
+  }
+
+  async send(contractAddress, abi, method, params=[], options={}) { 
+
+    const chainId = this.getChain()
+    const walletClient = await getWalletClient({chainId});
+    const publicClient = getPublicClient({chainId});
+
+    const txHash = await walletClient.writeContract({
+      address: contractAddress,
+      abi: abi,
+      functionName: method,
+      args: params,
+      ...options
+    })
+
+    console.trace('txHash', txHash);
+
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+    console.trace('receipt', receipt);
+
+    return receipt;
   }
 
   async close() {

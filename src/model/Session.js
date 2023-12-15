@@ -111,9 +111,17 @@ export class Session {
   /**
    * @dev Forwarded to the vault
    */
-  async writeFile(filename, content) {
+  async readFile(file) {
     if (!this.vault) return Promise.reject('session not initialised');
-    return this.vault.writeFile(filename, content);
+    return this.vault.readFile(file);
+  }
+
+  /**
+   * @dev Forwarded to the vault
+   */
+  async writeFile(file, content) {
+    if (!this.vault) return Promise.reject('session not initialised');
+    return this.vault.writeFile(file, content);
   }
 
   /**
@@ -127,9 +135,16 @@ export class Session {
   /**
    * @dev Forwarded to the taskList
    */
-  async deleteVault(file) {
+  async deleteVault() {
     if (!this.vault) return Promise.reject('session not initialised');
-    // TODO
+    await this.wallet.send(
+      this.bubbleId.contract,
+      contractSourceCode.default.abi, 
+      'terminate',
+      []
+    );
+    this.bubbleId = undefined;
+    this._saveState();
   }
 
   /**

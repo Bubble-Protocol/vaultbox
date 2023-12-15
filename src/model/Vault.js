@@ -60,7 +60,7 @@ export class Vault {
     this.index = await this._readIndex();
     const fileList = await this.bubble.list(toFileId(0));
     this.files = fileList.map(f => {
-      const nameMap = this.index.find(i => i.hash === f.name) || {hash: f.name, name: f.name};
+      const nameMap = this.index.find(i => i.hash === f.name) || {hash: f.name, name: f.name, mimetype: 'application/octet-stream'};
       return {...f, ...nameMap};
     });
     console.trace('index file', this.index);
@@ -68,16 +68,26 @@ export class Vault {
   }
 
   /**
-   * @dev Promises to add a new task and write it to the bubble.
+   * @dev Promises to write the file to the vault bubble.
    */
-  async writeFile(filename, content) {
-    console.trace('writing file', filename);
+  async readFile(file) {
+    console.trace('reading file', file.hash, file.name, file.mimetype);
+    return await this.bubble.read(file.hash);
+  }
+
+  /**
+   * @dev Promises to read the file from the vault bubble.
+   */
+  async writeFile(file, content) {
+    console.trace('writing file', file.name);
     const now = Date.now();
-    const hash = '0x'+ecdsa.hash(filename);
-    if (this.index.findIndex(i => i.hash === hash) < 0) this.index.push({hash: hash, name: filename});
+    const hash = '0x'+ecdsa.hash(file.name);
+    if (this.index.findIndex(i => i.hash === hash) < 0) this.index.push({hash: hash, name: file.name, mimetype: file.type});
     await this._writeIndex();
-    await this.bubble.write(hash, content)
-    this.files.push({ name: filename, hash: hash, type: 'file', length: content.length, created: now, modified: now });
+    await this.bubble.write(hash, content);
+    if (!this.files.find(f => f.name === file.name)) {
+      this.files.push({ name: file.name, hash: hash, type: 'file', mimetype: file.type, length: content.length, created: now, modified: now });
+    }
   }
 
   /**

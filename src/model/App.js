@@ -79,6 +79,7 @@ export class VaultApp {
     // Register UI functions
     stateManager.register('vault-functions', {
       createVault: this.createVault.bind(this),
+      readFile: this.readFile.bind(this),
       writeFile: this.writeFile.bind(this),
       deleteFile: this.deleteFile.bind(this),
       deleteVault: this.deleteVault.bind(this)
@@ -96,9 +97,17 @@ export class VaultApp {
   /**
    * @dev Writes a new file to the vault. Dispatches the updated file list when complete.
    */
-  async writeFile(filename, content) {
+  async readFile(file) {
     if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
-    return this.session.writeFile(filename, content)
+    return this.session.readFile(file);
+  }
+
+  /**
+   * @dev Writes a new file to the vault. Dispatches the updated file list when complete.
+   */
+  async writeFile(file, content) {
+    if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
+    return this.session.writeFile(file, content)
     .then(result => {
       stateManager.dispatch('files', [...this.session.getFiles()]);
       return result;
@@ -114,9 +123,6 @@ export class VaultApp {
     .then(() => {
       stateManager.dispatch('files', [...this.session.getFiles()]);
     })
-    .catch(error => {
-      stateManager.dispatch('error', new Error('Failed to delete file from vault: '+error.message));
-    })  
   }
 
   /**
@@ -124,10 +130,7 @@ export class VaultApp {
    */
   async deleteVault() {
     if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
-    return this.session.deleteVault()
-    .catch(error => {
-      stateManager.dispatch('error', new Error('Failed to delete vault: '+error.message));
-    })  
+    return this.session.deleteVault().finally(() => this.session.isNew() && this._setState(STATES.new));
   }
 
   /**

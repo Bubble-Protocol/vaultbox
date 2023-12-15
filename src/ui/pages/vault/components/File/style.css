@@ -26,7 +26,7 @@
   color: #333;
   flex: 1;
   font-family: "Arial-Regular", Helvetica;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   height: 16px;
   letter-spacing: 0;
@@ -35,6 +35,7 @@
   position: relative;
   white-space: normal;
   border: none;
+  flex: 1;
 }
 
 .file .name:hover, .file .icon {
@@ -46,9 +47,14 @@
   width: 20px;
   min-width: 20px;
   height: 20px;
+  flex: 0;
 }
 
 .file .loader-small {
   width: 20px;
   height: 20px;
+}
+
+.file a {
+  text-decoration: none;
 }
