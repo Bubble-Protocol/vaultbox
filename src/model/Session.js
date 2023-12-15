@@ -111,9 +111,9 @@ export class Session {
   /**
    * @dev Forwarded to the vault
    */
-  async writeFile(file) {
+  async writeFile(filename, content) {
     if (!this.vault) return Promise.reject('session not initialised');
-    return this.vault.writeFile(file);
+    return this.vault.writeFile(filename, content);
   }
 
   /**
@@ -122,6 +122,14 @@ export class Session {
   async deleteFile(file) {
     if (!this.vault) return Promise.reject('session not initialised');
     return this.vault.deleteFile(file);
+  }
+
+  /**
+   * @dev Forwarded to the taskList
+   */
+  async deleteVault(file) {
+    if (!this.vault) return Promise.reject('session not initialised');
+    // TODO
   }
 
   /**

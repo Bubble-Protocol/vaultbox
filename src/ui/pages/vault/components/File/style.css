@@ -1,19 +1,29 @@
-.task {
+.file {
   flex: 1;
   align-self: stretch;
   align-items: center;
-  border: 1px solid;
-  border-color: #a8a8a8;
-  border-radius: 8px;
   display: flex;
   gap: 8px;
   overflow: hidden;
-  padding: 12px 16px;
   position: relative;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
-.task .text {
-  color: #666666;
+.file:hover {
+  background-color: rgb(224, 35, 69, 0.2);
+}
+
+.file .display-on-hover {
+  opacity: 0;
+}
+
+.file:hover .display-on-hover {
+  opacity: 1;
+}
+
+.file .name {
+  color: #333;
   flex: 1;
   font-family: "Arial-Regular", Helvetica;
   font-size: 14px;
@@ -27,25 +37,18 @@
   border: none;
 }
 
-.task .radio {
+.file .name:hover, .file .icon {
+  cursor: pointer;
+}
+
+.file .icon {
   flex: 0;
   width: 20px;
   min-width: 20px;
   height: 20px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  background-color: #eee;
 }
 
-.task .done {
-  background-color: #1e2bba;
+.file .loader-small {
+  width: 20px;
+  height: 20px;
 }
-
-.task .done-text {
-  text-decoration: line-through;
-}
-
-.task .text-button {
-  font-size: 14px;
-}
-

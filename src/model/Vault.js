@@ -4,7 +4,9 @@
 
 import { bubbleProviders, encryptionPolicies, Bubble, toFileId } from '@bubble-protocol/client';
 import { ContentId, assert } from '@bubble-protocol/core';
+import { ecdsa } from '@bubble-protocol/crypto';
 
+const INDEX_FILE = ecdsa.hash("*bubble protocol vault index file*");
 
 /**
  * Encapsulates a vault and its off-chain bubble.  The bubble's contract is defined by the 
@@ -20,9 +22,14 @@ export class Vault {
   bubble;
 
   /**
-   * @dev Local copy of the task list, read from the bubble during initialisation.
+   * @dev Local copy of the file list, read from the bubble during initialisation.
    */
   files = [];
+
+  /**
+   * @dev Local copy of the file name index, read from the bubble during initialisation.
+   */
+  index = [];
 
   /**
    * @dev Constructs the `bubble` object, an instance of the `Bubble` class. Specifies HTTP(S) as
@@ -50,19 +57,27 @@ export class Vault {
     console.trace('initialising vault');
     console.trace('bubble id:', this.bubble.contentId.toObject());
     console.trace('bubble id as DID:', this.bubble.contentId.toDID());
-    this.files = await this.bubble.list(toFileId(0));
+    this.index = await this._readIndex();
+    const fileList = await this.bubble.list(toFileId(0));
+    this.files = fileList.map(f => {
+      const nameMap = this.index.find(i => i.hash === f.name) || {hash: f.name, name: f.name};
+      return {...f, ...nameMap};
+    });
+    console.trace('index file', this.index);
     console.trace('loaded vault', this.files);
   }
 
   /**
    * @dev Promises to add a new task and write it to the bubble.
    */
-  async writeFile(file) {
-    // TODO
-    console.trace('writing file', file);
-    const content = ''; // TODO
-    await this.bubble.write(file, content);
-    this.files.push(file);
+  async writeFile(filename, content) {
+    console.trace('writing file', filename);
+    const now = Date.now();
+    const hash = '0x'+ecdsa.hash(filename);
+    if (this.index.findIndex(i => i.hash === hash) < 0) this.index.push({hash: hash, name: filename});
+    await this._writeIndex();
+    await this.bubble.write(hash, content)
+    this.files.push({ name: filename, hash: hash, type: 'file', length: content.length, created: now, modified: now });
   }
 
   /**
@@ -70,9 +85,28 @@ export class Vault {
    */
   async deleteFile(file) {
     console.trace('deleting file', file);
-    await this.bubble.delete(file);
-    this.files = this.files.filter(f => file !== f);
+    await this.bubble.delete(file.hash);
+    this.files = this.files.filter(f => file.hash !== f.hash);
+    this.index = this.index.filter(f => file.hash !== f.hash);
+    await this._writeIndex();
   }
 
+  /**
+   * @dev Reads and parses the index file. 
+   */
+  async _readIndex() {
+    console.trace('reading index file ', INDEX_FILE);
+    const json = await this.bubble.read(INDEX_FILE).catch(() => null);
+    if (!json) return [];
+    return JSON.parse(json);
+  }
+  
+  /**
+   * @dev Writes the index file
+   */
+  async _writeIndex() {
+    console.trace('writing index file ', INDEX_FILE);
+    return this.bubble.write(INDEX_FILE, JSON.stringify(this.index));
+  }
 
 }

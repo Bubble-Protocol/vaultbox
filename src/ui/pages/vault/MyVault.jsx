@@ -3,11 +3,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button } from "../../components/Button/Button";
+import { File } from "./components/File";
 import { useAccount } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { stateManager } from "../../../state-context";
 
 export const MyVault = () => {
@@ -16,22 +15,46 @@ export const MyVault = () => {
   const files = stateManager.useStateData('files')();
   const appError = stateManager.useStateData('error')();
   const { writeFile, deleteFile, deleteVault } = stateManager.useStateData('vault-functions')();
-  const [ updating, setUpdating ] = useState(false);
+  const [ writing, setWriting ] = useState([]);
+  const [ deleting, setDeleting ] = useState([]);
+  const [ localError, setLocalError ] = useState();
+  const inputFile = React.createRef();
 
-  async function add() {
-    // TODO
-    // setUpdating(true);
-    // await writeFile();
-    // setUpdating(false);
+  async function openFileChooser() {
+    inputFile.current.click();
   }
 
-  async function delFile() {
-    // TODO
+  async function delFile(file) {
+    setDeleting([...deleting, file]);
+    deleteFile(file)
+    .finally(() => setDeleting(deleting.filter(f => f !== file)));
   }
 
   async function delVault() {
     // TODO
   }
+
+  function addFiles(e) {
+    const fileList = e.target.files;
+    if (fileList && fileList.length > 0) {
+      const files = [];
+      for(let i=0; i<fileList.length; i++) {
+        files.push(fileList.item(i));
+      }
+      setWriting([...writing, ...files]);
+      files.forEach(file => {
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(writeFile(file.name, reader.result));
+          reader.onerror = () => reject(new Error('failed to read '+file.name));
+          reader.readAsBinaryString(file);
+        })
+        .then(() => setWriting(writing.filter(f => f.name !== file.name)))
+        .catch(error => setWriting(writing.map(f => { return f.name !== file.name ? f : {...f, status: 'error', error: error} } )))
+      })
+    }
+  }
+
 
   return (
     <div className="vault">
@@ -40,17 +63,23 @@ export const MyVault = () => {
       <hr/>
 
       {/* File List */}
-      {files.length === 0 && <span className="info-text">vault is empty</span>}
+      <div className="file-list">
+        {files.length === 0 && writing.length === 0 && <span className="info-text">vault is empty</span>}
+        {files.length > 0 && files.map(file => { return <File key={file.name} file={file} status={deleting.includes(file) ? "deleting" : "saved"} onDelete={delFile}></File> })}
+        {writing.length > 0 && writing.map(file => { return <File key={file.name} file={file} status="writing" onDelete={()=>{}}></File> })}
+      </div>
 
-      {!updating && <Button title="Add File" onClick={add} disabled={!isConnected} />}
-      {updating && <div className="loader" />}
+      <Button title="Add File" onClick={openFileChooser} disabled={!isConnected} />
 
       <hr/>
 
-      <div className="text-button" onClick={delVault} disabled={updating || !isConnected} >Delete Vault</div>
+      <div className="text-button" onClick={delVault} disabled={!isConnected} >Delete Vault</div>
 
       {/* Error log */}
-      {appError && <span className='error-text'>{formatError(appError)}</span>}
+      {localError && <span className='error-text'>{formatError(localError)}</span>}
+      {!localError && appError && <span className='error-text'>{formatError(appError)}</span>}
+
+      <input id='file' ref={inputFile} type="file" multiple accept='*' hidden={true} onChange={addFiles} />
 
     </div>
   );

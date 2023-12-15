@@ -96,22 +96,38 @@ export class VaultApp {
   /**
    * @dev Writes a new file to the vault. Dispatches the updated file list when complete.
    */
-  async writeFile(file) {
-    // TODO
+  async writeFile(filename, content) {
+    if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
+    return this.session.writeFile(filename, content)
+    .then(result => {
+      stateManager.dispatch('files', [...this.session.getFiles()]);
+      return result;
+    })
   }
 
   /**
    * @dev Deletes a file from the bubble. Dispatches the updated file list when complete.
    */
   async deleteFile(file) {
-    // TODO
+    if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
+    return this.session.deleteFile(file)
+    .then(() => {
+      stateManager.dispatch('files', [...this.session.getFiles()]);
+    })
+    .catch(error => {
+      stateManager.dispatch('error', new Error('Failed to delete file from vault: '+error.message));
+    })  
   }
 
   /**
    * @dev Deletes the vault and all its files
    */
   async deleteVault() {
-    // TODO
+    if (!this.session) return Promise.reject(new Error('must connect wallet first!'));
+    return this.session.deleteVault()
+    .catch(error => {
+      stateManager.dispatch('error', new Error('Failed to delete vault: '+error.message));
+    })  
   }
 
   /**
