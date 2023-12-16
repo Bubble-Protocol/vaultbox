@@ -37,7 +37,7 @@ function App() {
         <div className="logo clickable" onClick={() => window.innerWidth >= 910 ? navigate('/') : setMenuVisible(!menuVisible)} ></div>
         <div className="expander mobile"></div>
         <div className="menubar no-mobile">
-          <span className="header-link" onClick={() => navigate('/vault')}>My Vault</span>
+          <span className="header-link" onClick={() => navigate('/my-vault')}>My Vault</span>
           <span className="header-link" onClick={() => navigate('/prices')}>Prices</span>
         </div>
         <div className="right-menu">
@@ -48,7 +48,7 @@ function App() {
       {/* Content */}
         <Routes>
           <Route path='/create-vault' element={vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
-          <Route path='/vault' element={isConnected && vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
+          <Route path='/my-vault' element={isConnected && vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
           <Route path='/prices' element={<Home/>} />
           <Route path='*' element={<Home/>} />
         </Routes>

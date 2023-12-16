@@ -19,7 +19,7 @@ export const MobileMenu = ({visible, onCompletion}) => {
         <img className="logo clickable" src={logo} onClick={onCompletion} ></img>
         <div className="menu">
           <div className="menu-option" onClick={() => go('/')}>Home</div>
-          <div className="menu-option" onClick={() => go('/vault')}>My Vault</div>
+          <div className="menu-option" onClick={() => go('/my-vault')}>My Vault</div>
           <div className="menu-option" onClick={() => go('/pricing')}>Pricing</div>
         </div>
       </div>

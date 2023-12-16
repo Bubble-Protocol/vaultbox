@@ -72,7 +72,7 @@ export const MyVault = () => {
   return (
     <div className="vault">
       <div className="title">My Vault</div>
-
+      <div className="info-text">Your vault is encrypted with military grade encryption and accessible only by you.</div>
       <hr/>
 
       {/* File List */}
