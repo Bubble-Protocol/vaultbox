@@ -103,6 +103,17 @@ export class Vault {
   }
 
   /**
+   * @dev Promises to delete the vault bubble, permanently deleting all files within.
+   * 
+   * The vault smart contract must be terminated to use this method.
+   */
+  async deleteVault() {
+    await this.bubble.terminate({silent: true});
+    this.files = [];
+    this.index = [];
+  }
+
+  /**
    * @dev Reads and parses the index file. 
    */
   async _readIndex() {

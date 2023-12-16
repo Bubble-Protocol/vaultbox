@@ -133,14 +133,17 @@ export class Session {
    */
   async deleteVault() {
     if (!this.vault) return Promise.reject('session not initialised');
+    console.trace('terminating contract', this.bubbleId.contract);
     await this.wallet.send(
       this.bubbleId.contract,
       contractSourceCode.default.abi, 
       'terminate',
       []
     );
+    console.trace('deleting bubble', this.bubbleId); 
     this.bubbleId = undefined;
     this._saveState();
+    await this.vault.deleteVault();  // it will be deleted anyway but this will force it straight away
   }
 
   /**
