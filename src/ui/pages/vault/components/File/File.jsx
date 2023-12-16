@@ -3,31 +3,75 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
 import fileIcon from "../../../../assets/file-icon.svg";
 import downloadIcon from "../../../../assets/download-icon.svg";
 import binIcon from "../../../../assets/bin-icon.svg";
 import errorIcon from "../../../../assets/error-icon.png";
+import { stateManager } from "../../../../../state-context";
+import { hexToUint8Array } from "@bubble-protocol/crypto/src/utils";
 
-export const File = ({ file, status, url, onRead, onDelete }) => {
+export const File = ({ file, writePromise }) => {
+
+  const { readFile, deleteFile } = stateManager.useStateData('vault-functions')();
+  const [ url, setUrl ] = useState();
+  const [ error, setError ] = useState();
+  const [ deleting, setDeleting ] = useState(false);
+  const [ reading, setReading ] = useState(false);
+  const [ writing, setWriting ] = useState(writePromise !== undefined);
+
+
+  useEffect(() => {
+    const isWriting = !!writePromise;
+    setWriting(isWriting);
+    if (isWriting) writePromise.then(() => setWriting(false));
+  }, [writePromise])
+
+  async function del() {
+    if (error) setError(null);
+    setDeleting(true);
+    deleteFile(file)
+    .catch(error => setError(error))
+    .finally(() => setDeleting(false));
+  }
+
+  async function download() {
+    if (error) setError(null);
+    setReading(true);
+    readFile(file)
+    .then(content => {
+      const blob = new Blob([hexToUint8Array(content)], { type: file.mimetype });
+      const url = window.URL.createObjectURL(blob);
+      setUrl(url);
+      setReading(false);
+    })
+    .catch(error => {
+      setError(error);
+      setReading(false);
+    })
+  }
+
   return (
     <div className="file">
-      {status === 'saved' && <img className="icon" src={fileIcon}></img>}
-      {status === 'downloaded' && <a href={url} download={file.name}><img className="icon" src={downloadIcon}></img></a>}
-      {(status === 'writing' || status === 'reading') && <div className="loader icon"></div>}
-      {status === 'error' && <img className="icon" src={errorIcon}></img>}
-      {!url && <div className="name" onClick={() => onRead && onRead(file)}>{file.name}</div>}
+      {/* left icon */}
+      {!url && !error && !reading && !writing && <img className="icon" src={fileIcon}></img>}
+      {url && !error && !reading && !writing && <a href={url} download={file.name}><img className="icon" src={downloadIcon}></img></a>}
+      {error && !reading && !writing && <img className="icon" src={errorIcon}></img>}
+      {(reading || writing) && <div className="loader icon"></div>}
+
+      {/* filename */}
+      {!url && <div className="name" onClick={download}>{file.name}</div>}
       {url && <a href={url} download={file.name}><div className="name">{file.name}</div></a>}
-      {status !== 'deleting' && <img className="icon display-on-hover" src={binIcon} onClick={() => onDelete(file)}></img>}
-      {status === 'deleting' && <div className="loader icon"></div>}
+
+      {/* right icon */}
+      {!deleting && <img className="icon display-on-hover" src={binIcon} onClick={del}></img>}
+      {deleting && <div className="loader icon"></div>}
     </div>
   );
 };
 
 File.propTypes = {
   file: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
-  onRead: PropTypes.func,
-  onDelete: PropTypes.func.isRequired,
+  isNew: PropTypes.bool.isRequired,
 };
