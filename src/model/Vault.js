@@ -6,7 +6,7 @@ import { bubbleProviders, encryptionPolicies, Bubble, toFileId } from '@bubble-p
 import { ContentId, assert } from '@bubble-protocol/core';
 import { ecdsa } from '@bubble-protocol/crypto';
 
-const INDEX_FILE = ecdsa.hash("*bubble protocol vault index file*");
+const INDEX_FILE = '0x'+ecdsa.hash("*bubble protocol vault index file*");
 
 /**
  * Encapsulates a vault and its off-chain bubble.  The bubble's contract is defined by the 
@@ -59,7 +59,8 @@ export class Vault {
     console.trace('bubble id as DID:', this.bubble.contentId.toDID());
     this.index = await this._readIndex();
     const fileList = await this.bubble.list(toFileId(0));
-    this.files = fileList.map(f => {
+
+    this.files = fileList.filter(f => f.name !== INDEX_FILE).map(f => {
       const nameMap = this.index.find(i => i.hash === f.name) || {hash: f.name, name: f.name, mimetype: 'application/octet-stream'};
       return {...f, ...nameMap};
     });
