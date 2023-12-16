@@ -62,7 +62,7 @@ export const File = ({ file, writePromise }) => {
 
       {/* filename */}
       {!url && <div className="name" onClick={download}>{file.name}</div>}
-      {url && <a href={url} download={file.name}><div className="name">{file.name}</div></a>}
+      {url && <a className="name" href={url} download={file.name}>{file.name}</a>}
 
       {/* right icon */}
       {!deleting && <img className="icon display-on-hover" src={binIcon} onClick={del}></img>}

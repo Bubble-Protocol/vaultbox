@@ -19,7 +19,7 @@
   padding: 0;
 }
 
-.mobile-menu .visible {
+.visible {
   transform: translateX(0);
 }
 
@@ -41,7 +41,7 @@
 
 .mobile-menu .menu-option {
   color: #242424;
-  font-family: Mukta;
+  font-family: Poppins;
   font-size: 22px;
   font-style: normal;
   font-weight: 300;

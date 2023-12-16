@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo-icon.png";
 
 export const MobileMenu = ({visible, onCompletion}) => {
 
@@ -18,6 +18,7 @@ export const MobileMenu = ({visible, onCompletion}) => {
       <div className={"mobile-menu" + (visible ? ' visible' : '')}>
         <img className="logo clickable" src={logo} onClick={onCompletion} ></img>
         <div className="menu">
+          <div className="menu-option" onClick={() => go('/')}>Home</div>
           <div className="menu-option" onClick={() => go('/vault')}>My Vault</div>
           <div className="menu-option" onClick={() => go('/pricing')}>Pricing</div>
         </div>

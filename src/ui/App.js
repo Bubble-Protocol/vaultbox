@@ -41,7 +41,7 @@ function App() {
           <span className="header-link" onClick={() => navigate('/prices')}>Prices</span>
         </div>
         <div className="right-menu">
-          <ConnectButton className="test" showBalance={false} chainStatus={"icon"} />
+          <ConnectButton className="test" showBalance={false} chainStatus={"icon"} accountStatus={{smallScreen: 'avatar', largeScreen: 'address'}} />
         </div>
       </div>
 
