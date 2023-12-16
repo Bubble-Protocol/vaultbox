@@ -34,7 +34,7 @@ root.render(
   <React.StrictMode>
     <WagmiConfig config={rainbowKitConfig.wagmiConfig}>
       <RainbowKitProvider chains={rainbowKitConfig.chains} theme={lightTheme({borderRadius: 'small'})} >
-        <BrowserRouter>
+        <BrowserRouter basename="/vault">
           <UI app={app} />
         </BrowserRouter>
       </RainbowKitProvider>
