@@ -38,15 +38,12 @@ export class Session {
   /**
    * @dev Constructs this Session from the locally saved state.
    */
-  constructor(id, chain, bubbleProvider, wallet) {
+  constructor(id, config, wallet) {
     assert.isString(id, 'id');
-    assert.isObject(chain, 'chain');
-    assert.isNumber(chain.id, 'chain.id');
-    assert.isString(bubbleProvider, 'bubbleProvider');
+    assert.isObject(config, 'config');
     assert.isObject(wallet, 'wallet');
     this.id = id;
-    this.chain = chain;
-    this.bubbleProvider = bubbleProvider;
+    this.config = config;
     this.wallet = wallet;
     this._loadState();
   }
@@ -78,14 +75,13 @@ export class Session {
     if (!this.bubbleId || !this.bubbleId.contract) {
       // contract has not yet been deployed
       console.trace('deploying contract');
-      const address = await this.wallet.deploy(
-        this.chain, 
+      const {address, chain} = await this.wallet.deploy(
         contractSourceCode.default.abi, 
         contractSourceCode.default.bin, 
         [this.key.address]
       );
       this.bubbleId = {
-        chain: this.chain.id,
+        chain: chain,
         contract: address
       }
       this._saveState();
@@ -93,7 +89,7 @@ export class Session {
 
     if (!this.bubbleId.provider) {
       // bubble has not yet been constructed
-      this.bubbleId.provider = this.bubbleProvider;
+      this.bubbleId.provider = this.config.providers[this.bubbleId.chain];
       console.trace('constructing bubble', this.bubbleId);
       this.vault = new Vault(new ContentId(this.bubbleId), this.key.signFunction, this.key.privateKey);
       await this.vault.create();

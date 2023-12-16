@@ -5,7 +5,6 @@
 import { stateManager } from '../state-context';
 import { Wallet } from './Wallet';
 import { Session } from './Session';
-import { baseGoerli } from 'wagmi/chains';
 
 /**
  * @dev ID used to prefix all local storage entries
@@ -13,14 +12,15 @@ import { baseGoerli } from 'wagmi/chains';
 const APP_ID = 'bubble-vault';
 
 /**
- * @dev Blockchain ID
+ * @dev Configuration data.
+ *   - providers: Remote bubble server that hosts the vault bubbles for different chains
  */
-const CHAIN = baseGoerli;
-
-/**
- * @dev Remote bubble server that hosts the vault bubbles
- */
-const BUBBLE_PROVIDER = "https://vault.bubbleprotocol.com/v2/base-goerli";
+const CONFIG = {
+  providers: {
+    84531: "https://vault.bubbleprotocol.com/v2/base-goerli", 
+    137: "https://vault.bubbleprotocol.com/v2/polygon"
+  }
+};
 
 /**
  * @dev Application state enum. @See the `state` property below.
@@ -147,7 +147,7 @@ export class VaultApp {
    * any existing session first, clearing the UI state.
    */
   _openSession(account) {
-    this.session = new Session(APP_ID+'-'+account.slice(2).toLowerCase(), CHAIN, BUBBLE_PROVIDER, this.wallet);
+    this.session = new Session(APP_ID+'-'+account.slice(2).toLowerCase(), CONFIG, this.wallet);
     if (!this.session.isNew()) this._initialiseSession();
     else this._setState(STATES.new);
   }

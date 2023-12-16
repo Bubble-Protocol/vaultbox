@@ -35,23 +35,23 @@ export class Wallet {
     else return undefined;
   }
 
-  async deploy(chain, abi, bytecode, args=[], options={}) {
+  async deploy(abi, bytecode, args=[], options={}) {
 
-    const walletClient = await getWalletClient();
-    const publicClient = getPublicClient();
+    const chainId = this.getChain()
+    const walletClient = await getWalletClient({chainId});
+    const publicClient = getPublicClient({chainId});
 
     const txHash = await walletClient.deployContract({
       account: this.account,
       abi,
       bytecode,
       args,
-      chain,
       ...options
     });
 
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
-    return receipt.contractAddress;
+    return {address: receipt.contractAddress, chain: chainId};
   }
 
   async send(contractAddress, abi, method, params=[], options={}) { 
