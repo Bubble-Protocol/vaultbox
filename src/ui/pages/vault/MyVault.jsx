@@ -53,14 +53,14 @@ export const MyVault = () => {
       addedFiles.forEach(file => {
         const overwrites = savedFiles.find(f => f.name === file.name);
         file.overwrites = overwrites;
-        write(file);
+        file.writePromise = write(file);
       });
       setWritingFiles([...writingFiles, ...addedFiles]);
     }
   }
 
-  function write(file) {
-    file.writePromise = new Promise((resolve, reject) => {
+  async function write(file) {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(writeFile(file, uint8ArrayToHex(new Uint8Array(reader.result))));
       reader.onerror = () => reject(new Error('failed to read '+file.name));
@@ -72,7 +72,10 @@ export const MyVault = () => {
   return (
     <div className="vault">
       <div className="title">My Vault</div>
-      <div className="info-text">Your vault is encrypted with military grade encryption and accessible only by you.</div>
+      <div className="info-text">
+        Your vault is secured using advanced encryption, and access is governed exclusively by your personal smart contract.
+        Only your wallet can access and decrypt your vault files.
+      </div>
       <hr/>
 
       {/* File List */}
