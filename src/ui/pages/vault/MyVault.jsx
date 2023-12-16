@@ -25,7 +25,7 @@ export const MyVault = () => {
   const inputFile = React.createRef();
 
   useEffect(() => {
-    setFiles([...savedFiles, ...writingFiles]);
+    setFiles([...savedFiles, ...writingFiles].sort((a,b) => a.name.localeCompare(b.name)));
   }, [savedFiles, writingFiles])
 
   async function openFileChooser() {

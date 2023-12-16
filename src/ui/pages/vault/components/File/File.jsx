@@ -32,7 +32,10 @@ export const File = ({ file, writePromise }) => {
     if (error) setError(null);
     setDeleting(true);
     deleteFile(file)
-    .catch(error => setError(error))
+    .catch(error => {
+      console.trace(error);
+      setError(error)
+    })
     .finally(() => setDeleting(false));
   }
 
@@ -47,6 +50,7 @@ export const File = ({ file, writePromise }) => {
       setReading(false);
     })
     .catch(error => {
+      console.trace(error);
       setError(error);
       setReading(false);
     })
@@ -73,5 +77,5 @@ export const File = ({ file, writePromise }) => {
 
 File.propTypes = {
   file: PropTypes.object.isRequired,
-  isNew: PropTypes.bool.isRequired,
+  writePromise: PropTypes.object,
 };
