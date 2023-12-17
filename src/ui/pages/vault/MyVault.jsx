@@ -79,13 +79,15 @@ export const MyVault = () => {
       <hr/>
 
       {/* File List */}
-      <div className="file-list">
-        {files.length === 0 && <span className="info-text">vault is empty</span>}
-        {files.filter(f => !f.overwrites).map(file => {
-          const overwrite = writingFiles.find(f => f.overwrites === file);
-          const writePromise = overwrite ? overwrite.writePromise : file.writePromise;
-          return <File key={file.name} file={file} writePromise={writePromise}></File> 
-        })}
+      <div className="file-list-container">
+        <div className="file-list">
+          {files.length === 0 && <span className="info-text">vault is empty</span>}
+          {files.filter(f => !f.overwrites).map(file => {
+            const overwrite = writingFiles.find(f => f.overwrites === file);
+            const writePromise = overwrite ? overwrite.writePromise : file.writePromise;
+            return <File key={file.name} file={file} writePromise={writePromise}></File> 
+          })}
+        </div>
       </div>
 
       <Button title="Add File" onClick={openFileChooser} disabled={!isConnected} />
