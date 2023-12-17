@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button } from "../../components/Button/Button";
@@ -15,10 +15,15 @@ export const CreateVault = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal();
+  const vaultState = stateManager.useStateData('state')();
   const appError = stateManager.useStateData('error')();
   const { createVault } = stateManager.useStateData('vault-functions')();
   const [ creating, setCreating ] = useState(false);
 
+  useEffect(() => {
+    if (vaultState === 'initialised') navigate('/my-vault');
+  }, [vaultState, navigate]);
+  
   async function create() {
     setCreating(true);
     await createVault();

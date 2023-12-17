@@ -6,12 +6,9 @@ import React, { useState } from "react";
 import './App.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Route, Routes, useNavigate } from "react-router-dom";
-import logo from "./assets/logo.png";
 import { Home } from "./pages/home/Home";
-import { useAccount } from "wagmi";
 import { MobileMenu } from "./components/MobileMenu/MobileMenu";
 import { CreateVault } from "./pages/create";
-import { stateManager } from "../state-context";
 import { MyVault } from "./pages/vault";
 
 
@@ -21,9 +18,7 @@ import { MyVault } from "./pages/vault";
 
 function App() {
 
-  const { isConnected } = useAccount()
   const [menuVisible, setMenuVisible] = useState(false);
-  const vaultState = stateManager.useStateData('state')();
   const navigate = useNavigate();
 
   return (
@@ -47,8 +42,8 @@ function App() {
 
       {/* Content */}
         <Routes>
-          <Route path='/create-vault' element={vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
-          <Route path='/my-vault' element={isConnected && vaultState === 'initialised' ? <MyVault/> : <CreateVault/>} />
+          <Route path='/create-vault' element={<CreateVault/>} />
+          <Route path='/my-vault' element={<MyVault/>} />
           <Route path='/prices' element={<Home/>} />
           <Route path='*' element={<Home/>} />
         </Routes>

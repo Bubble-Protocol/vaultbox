@@ -15,6 +15,7 @@ export const MyVault = () => {
 
   const navigate = useNavigate();
   const { isConnected } = useAccount()
+  const vaultState = stateManager.useStateData('state')();
   const savedFiles = stateManager.useStateData('files')();
   const appError = stateManager.useStateData('error')();
   const { writeFile, deleteVault } = stateManager.useStateData('vault-functions')();
@@ -24,6 +25,11 @@ export const MyVault = () => {
   const [ localError, setLocalError ] = useState();
   const inputFile = React.createRef();
 
+  useEffect(() => {
+    if (!isConnected) navigate('/');
+    else if (vaultState !== 'initialised') navigate('/create-vault');
+  }, [isConnected, vaultState, navigate]);
+  
   useEffect(() => {
     setFiles([...savedFiles, ...writingFiles].sort((a,b) => a.name.localeCompare(b.name)));
   }, [savedFiles, writingFiles])
