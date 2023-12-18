@@ -20,8 +20,8 @@ export const Home = () => {
         <div className="titles">
           <span className="title">Secure your <span className="title-highlight">files</span> in your personal encrypted <span className="title-highlight">vault</span></span>
           <span className="subtitle">Take control of your personal data in a vault secured by your web3 wallet.</span>
-          {vaultState === 'initialised' && <Button title="Go To Your Vault" onClick={() => navigate('create-vault')} />}
-          {vaultState !== 'initialised' && <Button title="Create Your Vault" onClick={() => navigate('create-vault')} />}
+          {vaultState === 'initialised' && <Button title="Go To Your Vault" onClick={() => navigate('/create-vault')} />}
+          {vaultState !== 'initialised' && <Button title="Create Your Vault" onClick={() => navigate('/create-vault')} />}
         </div>
         <img className="hero-image" src={heroImage}></img>
       </div>
