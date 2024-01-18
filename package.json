@@ -1,7 +1,7 @@
 {
   "name": "vault",
   "version": "0.0.1",
-  "homepage": "/vault",
+  "homepage": "/v2/vault",
   "private": true,
   "dependencies": {
     "@bubble-protocol/client": "^0.1.2",
@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@web3modal/wagmi": "^3.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
